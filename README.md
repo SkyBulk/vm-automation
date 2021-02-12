@@ -1,11 +1,10 @@
 # Content
 * [VirtualBox VM automation in Python](#about)
 * [Downloads](#downloads)
-* [Usage](#usage)
 * [Host configuration](#host-configuration)
 * [Guest configuration](#guest-configuration)
-* [TODO (version 1.0)](#todo-version-10)
-* [TODO (version 2.0)](#todo-version-20)
+* [Usage](#usage)
+* [TODO](#todo)
 * [Example videos](#example-videos)
 * [Useful links](#useful-links)
 * [Donations](#donations)
@@ -19,6 +18,18 @@ Both Windows and Linux are tested as host OS. May work on other platforms, suppo
 # Downloads
 Latest stable version and Windows binaries are available in <a href="https://github.com/Pernat1y/vm-automation/releases" target="_blank">Releases</a>.
 
+# Host configuration
+* Both Windows and Linux are tested as host OS. May work on other platforms, supported by VirtualBox and Python.
+* You need VirtualBox (the newer the better). Proprietary Oracle VM VirtualBox Extension Pack is *not* required.
+* It is recommended to have folder with 'vboxmanage' binary in the environment variables.
+* You need a recent version of Python (3.7+).
+
+# Guest configuration
+* You must have Windows as the guest OS with auto login configured (or have a snapshot with a user logged in).
+* You must have VirtualBox guest additions installed.
+* It is strongly recommended to have live snapshots to restore to (otherwise it will be *much* slower).
+* VM disk encryption is *not* supported.
+
 # Usage:
 Essential commands:
 ```
@@ -26,6 +37,12 @@ python demo_cli.py \
     file.exe \
     --vms windows10 windows8 windows7 \
     --snapshots firefox chrome ie
+```
+or 
+```
+python demo_cli.py \
+    file.exe \
+    --config config.json
 ```
 
 All options (AKA --help):
@@ -76,31 +93,8 @@ Guests options:
   --post [POST]         Script to run after main file (default: None)
 ```
 
-# Host configuration
-* Both Windows and Linux are tested as host OS. May work on other platforms, supported by VirtualBox.
-* You need VirtualBox (the newer the better). Proprietary Oracle VM VirtualBox Extension Pack is *not* required.
-* It is recommended to have folder with 'vboxmanage' binary in the environment variables.
-* You need a recent version of Python (3.7+).
-
-# Guest configuration
-* You must have Windows as the guest OS with auto login configured (or have a snapshot with a user logged in).
-* You must have VirtualBox guest additions installed.
-* It is strongly recommended to have live snapshots to restore to (otherwise it will be *much* slower).
-* VM disk encryption is *not* supported (VBoxManage limitation).
-
-# TODO (version 1.0):
+# TODO
 * Small improvements.
-* Code optimization and fixes.
-* Better tests coverage.
-
-# TODO (version 2.0):
-* Use VirtualBox API.
-* Distribute workload to multiple physical hosts.
-* Implement web interface.
-* Add option to use pre-running VMs.
-* Add global progress status.
-* Vagrant integration (maybe).
-* VMware support (maybe).
 * Code optimization and fixes.
 * Better tests coverage.
 
@@ -117,14 +111,24 @@ Guests options:
 <a href="https://github.com/hfiref0x/VBoxHardenedLoader" target="_blank">VirtualBox Hardened VM detection mitigation loader - VBoxHardenedLoader</a>
 
 # Changelog
-Version 0.10.3:
-* Added function vm_functions.vm_disable_time_sync() and option to disable host-guest time sync ('--no_time_sync').
+Version 0.11:
+* Added support for configuration files. Usage: '--config config.json'.
+  See 'config-example.json' for example. 
+  If 'config.json' file is present, all options, except file name, are optional.
+* Added '--group' option. All VMs from this group will be used for analysis.
+  Can be used in place of '--vms' argument.
+* Added '--file_args' option to pass arguments to the main file/executable.
+* '--uac_parent' option renamed to '--open_with' as it may be used with any type of files, not only the executables.
+* Added colors to command line output. Enable with '--colors'.
+* Updated tests
 
 For complete changelog see <a href="CHANGELOG.md" target="_blank">CHANGELOG.md</a>
 
 # Donations
 You can support further development with a donation (Thanks!).
 
-BTC (Legacy): 1GDy6seYwiK92XAyoQsSeMf2LMR9pCpkY8
+Bitcoin: bc1q9jfne8r64k8gudu6layjfsqasd7507mnv6d4fr
 
-BTC (SegWit bech32): bc1q5wzj6qa3d7vtw9cehftt7gvswr60kgfgeu98z6
+Bitcoin (legacy): 1JeFmnk9PMjazXk6pL6mbhDJ3JheXgMXhp
+
+Monero: 48md2A642KBhge7MN8AWBngsUK6btRcV3B7zJmPzPmn6a4nAKjPWZHf8cPEQ5R9t4QcKUSonaPd79eJkJTb2QXLxMtiJQyG

@@ -1,23 +1,34 @@
 # Changelog
+Version 0.11:
+* Added support for configuration files. Usage: '--config config.json'.
+  See 'config-example.json' for example. 
+  If 'config.json' file is present, all options, except file name, are optional.
+* Added '--group' option. All VMs from this group will be used for analysis.
+  Can be used in place of '--vms' argument.
+* Added '--file_args' option to pass arguments to the main file/executable.
+* '--uac_parent' option renamed to '--open_with' as it may be used with any type of files, not only the executables.
+* Added colors to command line output. Enable with '--colors'.
+* Updated tests
+
 Version 0.10.3:
-* Added function vm_functions.vm_disable_time_sync() and option to disable host-guest time sync ('--no_time_sync').
+* Added function vm_functions.vm_disable_time_sync() and option '--no_time_sync' to disable host-to-guest time sync.
 
 Version 0.10.2:
-* Added option to check VirtualBox version online (--check_version). Will warn if outdated version is used.
-Windows binary does not have this option.
+* Added option to check VirtualBox version online (--check_version). Will warn if outdated version is used. 
+  Windows binary does not have this option.
 * Fixed '--log' option.
 
 Version 0.10.1:
-* Added function vm_functions.vm_memdump() and option to dump VM memory (--memdump).
-This may take some time and disk space.
+* Added function vm_functions.vm_memdump() and option to dump VM memory (--memdump). 
+  This may take some time and disk space.
 * Added script to build Windows binary using [Nuitka](https://nuitka.net/). See 'scripts' folder.
 
 Version 0.10:
 * Added option to dump all VM's network traffic to the file ('--pcap'). File will be saved as {vm_name}_{snapshot}.pcap.
 * Added option '--get_file' to download file (memory dumps, logs, reports, etc) before stopping VM.
 * Removed option 'keep' for all of the arguments. Omitting argument will do the same.
-* Added function vm_set_mac(vm, mac) and option to change MAC address for VM before start.
-Can be set to specific MAC ('--mac 80AABBCCDDEE'), 'new' for random mac in VirtualBox range or 'random' for random one.
+* Added function vm_set_mac(vm, mac) and option to change MAC address for VM before start. 
+  Can be set to specific MAC ('--mac 80AABBCCDDEE'), 'new' for random mac in VirtualBox range or 'random' for random one.
 * Logs levels tweaked to make default output more clean.
 * Added argument '--debug' (alias for '--verbosity debug').
 * Added standalone Windows binary. See releases section for download.
@@ -47,8 +58,8 @@ Version 0.8.1:
 * Fixed bug with some command line args were ignored (--ui).
 
 Version 0.8:
-* Added options 'uac_fix' and 'uac_parent' for vm_exec() function.
-Used to circumvent VirtualBox error VERR_PROC_ELEVATION_REQUIRED, when trying to execute application with mandatory UAC elevation.
+* Added options 'uac_fix' and 'uac_parent' for vm_exec() function. 
+  Used to circumvent VirtualBox error VERR_PROC_ELEVATION_REQUIRED, when trying to execute application with mandatory UAC elevation.
 * Added short aliases for '--vms' and '--snapshots' options: '-v' and '-s'.
 * Added option 'dictionary' for list_vms() function. List of VMs will be returned as {'vm': '/group'} dictionary.
 * Added function to clone VM - vm_clone().

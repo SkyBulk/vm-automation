@@ -1,0 +1,46 @@
+{
+  "vboxmanage": "vboxmanage",
+  "ui": "gui",
+  "timeout": 60,
+  "delay": 7,
+  "threads": 2,
+  "verbosity": "info",
+  "log": "",
+  "report": 0,
+  "record": 0,
+  "pcap": 0,
+  "memdump": 0,
+  "no_time_sync": 0,
+  "vms": [
+    {
+      "description": "Windows 10 x64; Admin user; Network on",
+      "vm": "w10_x64",
+      "snapshot": "admin_user",
+      "user": "admin",
+      "password": "12345678",
+      "remote_folder": "",
+      "open_with": "",
+      "network": "on",
+      "resolution": "",
+      "mac": "",
+      "get_file": "",
+      "pre": "",
+      "post": ""
+    },
+    {
+      "description": "Windows 10 x64; Normal user; Network off",
+      "vm": "w10_x64",
+      "snapshot": "user",
+      "user": "user",
+      "password": "12345678",
+      "remote_folder": "",
+      "uac_parent": "",
+      "network": "off",
+      "resolution": "",
+      "mac": "",
+      "get_file": "",
+      "pre": "",
+      "post": ""
+    }
+  ]
+}

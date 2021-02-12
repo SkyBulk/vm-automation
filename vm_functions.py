@@ -9,6 +9,7 @@ if __name__ == "__main__":
     print('This script only contains functions and cannot be called directly. See demo scripts for usage examples.')
     exit(1)
 
+
 # Set essential options
 if 'vboxmanage_path' not in locals():
     vboxmanage_path = 'vboxmanage'
@@ -357,19 +358,19 @@ def vm_disable_time_sync(vm):
     return result[0], result[1], result[2]
 
 
-def vm_exec(vm, username, password, remote_file, uac_parent='C:\\Windows\\Explorer.exe'):
+def vm_exec(vm, username, password, remote_file, open_with='C:\\Windows\\Explorer.exe'):
     """Execute file/command on guest OS
 
     :param vm: Virtual machine name.
     :param username: Guest OS username (login).
     :param password: Guest OS password.
     :param remote_file: Path to file on guest OS.
-    :param uac_parent: Parent application that will start/open main file.
+    :param open_with: Parent application that will start/open main file.
     :return: returncode, stdout, stderr.
     """
-    logging.info(f'{vm}: Executing file "{remote_file}" with parent "{uac_parent}" on VM "{vm}".')
+    logging.info(f'{vm}: Executing file "{remote_file}" with parent "{open_with}" on VM "{vm}".')
     result = vboxmanage(
-        f'guestcontrol {vm} --username {username} --password {password} start {uac_parent} {remote_file}')
+        f'guestcontrol {vm} --username {username} --password {password} start {open_with} {remote_file}')
     if result[0] == 0:
         logging.debug('File executed successfully.')
     else:

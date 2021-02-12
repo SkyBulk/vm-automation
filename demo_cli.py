@@ -4,8 +4,9 @@ import os
 import threading
 import time
 import http.client
+import json
 
-script_version = '0.10.3'
+script_version = '0.11'
 
 try:
     import support_functions
@@ -15,20 +16,30 @@ except ModuleNotFoundError:
     exit(1)
 
 # Parse command line arguments
-parser = argparse.ArgumentParser(prog='vm-automation', description='VirtualBox VM automation. ' +
-                                                                   'Web: https://github.com/Pernat1y/vm-automation')
+parser = argparse.ArgumentParser(prog='vm-automation', description=f'''VirtualBox VM automation {script_version};
+                                                                   https://github.com/Pernat1y/vm-automation''')
 
 required_options = parser.add_argument_group('Required options')
 required_options.add_argument('file', type=str, nargs='+', help='Path to file')
-required_options.add_argument('--vms', '-v', type=str, nargs='*', required=True,
+
+# Path to configuration file
+required_options.add_argument('--config', type=str, nargs='*', required=True,
+                              help='Configuration file to use')
+
+# Either VM(s) list or VM group can be specified. Can be specified in configuration file.
+required_options.add_argument('--vms', type=str, nargs='*', required=True,
                               help='Space-separated list of VMs to use')
-required_options.add_argument('--snapshots', '-s', type=str, nargs='*', required=True,
+required_options.add_argument('--group', type=str, nargs='*', required=True,
+                              help='Space-separated list of VMs to use')
+
+# Snapshots required for both VMs list and VM groups. Can be specified in configuration file.
+required_options.add_argument('--snapshots', type=str, nargs='*', required=True,
                               help='Space-separated list of snapshots to use')
 
 main_options = parser.add_argument_group('Main options')
 main_options.add_argument('--vboxmanage', default='vboxmanage', type=str, nargs='?',
                           help='Path to vboxmanage binary (default: %(default)s)')
-main_options.add_argument('--check_version', action='store_true',
+main_options.add_argument('--check_update', action='store_true',
                           help='Check for latest VirtualBox version online (default: %(default)s)')
 main_options.add_argument('--timeout', default=60, type=int, nargs='?',
                           help='Timeout in seconds for both commands and VM (default: %(default)s)')
@@ -61,9 +72,11 @@ guests_options.add_argument('--password', default='12345678', type=str, nargs='?
                             help='Password for guest OS (default: %(default)s)')
 guests_options.add_argument('--remote_folder', default='desktop', choices=['desktop', 'downloads', 'documents', 'temp'],
                             type=str, nargs='?',
-                            help='Destination folder in guest OS to place file. (default: %(default)s)')
-guests_options.add_argument('--uac_parent', default='C:\\Windows\\Explorer.exe', type=str,
-                            nargs='?', help='Path for parent app, which will start main file (default: %(default)s)')
+                            help='Destination folder in guest OS to place file (default: %(default)s)')
+guests_options.add_argument('--open_with', default='C:\\Windows\\Explorer.exe', type=str,
+                            nargs='?', help='Path for open_with app, which will open main file (default: %(default)s)')
+guests_options.add_argument('--args', default=None, type=str,
+                            nargs='?', help='Arguments to start analyzed file with (default: %(default)s)')
 guests_options.add_argument('--network', default=None, choices=['on', 'off'], nargs='?',
                             help='State of network adapter of guest OS (default: %(default)s)')
 guests_options.add_argument('--resolution', default=None, type=str, nargs='?',
@@ -97,7 +110,7 @@ no_time_sync = args.no_time_sync
 
 # vm_functions options
 vm_functions.vboxmanage_path = args.vboxmanage
-check_version = args.check_version
+check_update = args.check_update
 ui = args.ui
 vm_functions.timeout = timeout
 
@@ -107,7 +120,7 @@ vm_post_exec = args.post
 vm_login = args.login
 vm_password = args.password
 remote_folder = args.remote_folder
-uac_parent = args.uac_parent
+open_with = args.open_with
 vm_network_state = args.network
 vm_resolution = args.resolution
 vm_mac = args.mac
@@ -141,7 +154,7 @@ def show_info():
     logging.info(f'VirtualBox version: {vbox_version}\n')
 
     # Check for VirtualBox version
-    if check_version:
+    if check_update:
         conn = http.client.HTTPSConnection("download.virtualbox.org")
         conn.request("GET", "/virtualbox/LATEST-STABLE.TXT")
         r1 = conn.getresponse()
@@ -245,7 +258,7 @@ def main_routine(vm, snapshots_list):
 
         # Run pre exec script
         if vm_pre_exec:
-            vm_functions.vm_exec(vm, vm_login, vm_password, vm_pre_exec, uac_parent=uac_parent)
+            vm_functions.vm_exec(vm, vm_login, vm_password, vm_pre_exec, open_with=open_with)
             take_screenshot(vm, task_name)
         else:
             logging.debug('Pre exec is not set.')
@@ -269,7 +282,7 @@ def main_routine(vm, snapshots_list):
         take_screenshot(vm, task_name)
 
         # Run file
-        result = vm_functions.vm_exec(vm, vm_login, vm_password, remote_file_path, uac_parent=uac_parent)
+        result = vm_functions.vm_exec(vm, vm_login, vm_password, remote_file_path, open_with=open_with)
         if result[0] != 0:
             take_screenshot(vm, task_name)
             vm_functions.vm_stop(vm)
@@ -290,7 +303,7 @@ def main_routine(vm, snapshots_list):
 
         # Run post exec script
         if vm_post_exec:
-            vm_functions.vm_exec(vm, vm_login, vm_password, vm_post_exec, uac_parent=uac_parent)
+            vm_functions.vm_exec(vm, vm_login, vm_password, vm_post_exec, open_with=open_with)
             take_screenshot(vm, task_name)
         else:
             logging.debug('Post exec is not set.')
